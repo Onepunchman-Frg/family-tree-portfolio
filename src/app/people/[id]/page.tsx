@@ -3,13 +3,14 @@ import { findPersonById, findPeopleByIds } from "@/utils/relations";
 import Link from "next/link";
 
 interface Props {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
-export default function PersonPage({ params }: Props) {
-  const person = findPersonById(people, params.id);
+export default async function PersonPage({ params }: Props) {
+  const { id } = await params;
+  const person = findPersonById(people, id);
 
   if (!person) {
     return <p>Человек не найден</p>;

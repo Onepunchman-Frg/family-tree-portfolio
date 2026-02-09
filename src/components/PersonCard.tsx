@@ -9,7 +9,7 @@ interface Props {
 export default function PersonCard({ person }: Props) {
   return (
     <Link
-      href={`/person/${person.id}`}
+      href={`/people/${person.id}`}
       className={`block rounded-xl border border-gray-200 p-4 hover:shadow-md transition ${styles.card}`}
     >
       <h3 className="text-lg font-semibold">
