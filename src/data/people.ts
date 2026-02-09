@@ -1,1 +1,45 @@
-// временное хранилище (MVP)
+import { Person } from "@/types/person";
+
+export const people: Person[] = [
+  {
+    id: "1",
+    firstName: "Ильхам",
+    lastName: "Абдуллаев",
+    gender: "male",
+    birthDate: "1966-03-12",
+    birthPlace: "Фергана",
+    description: "Отец семьи",
+    parentsIds: [],
+    childrenIds: ["2"],
+    spouseIds: ["3"],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: "2",
+    firstName: "Батир",
+    lastName: "Абдуллаев",
+    gender: "male",
+    birthDate: "1997-08-21",
+    birthPlace: "Фергана",
+    description: "Сын",
+    parentsIds: ["1", "3"],
+    childrenIds: [],
+    spouseIds: [],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: "3",
+    firstName: "Альфия",
+    lastName: "Абдуллаева",
+    gender: "female",
+    birthPlace: "Фергана",
+    description: "Мать семьи",
+    parentsIds: [],
+    childrenIds: ["2"],
+    spouseIds: ["1"],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+];
