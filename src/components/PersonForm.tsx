@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Person, Gender } from "@/types/person";
+import { getPeople } from "@/utils/storage";
 
 interface Props {
   onSubmit: (person: Person) => void;
@@ -14,6 +15,15 @@ export default function PersonForm({ onSubmit }: Props) {
   const [birthDate, setBirthDate] = useState("");
   const [birthPlace, setBirthPlace] = useState("");
   const [description, setDescription] = useState("");
+
+  const [existingPeople, setExistingPeople] = useState<Person[]>([]);
+
+  useEffect(() => {
+    setExistingPeople(getPeople());
+  }, []);
+  const [parentsIds, setParentsIds] = useState<string[]>([]);
+  const [childrenIds, setChildrenIds] = useState<string[]>([]);
+  const [spouseIds, setSpouseIds] = useState<string[]>([]);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -83,6 +93,63 @@ export default function PersonForm({ onSubmit }: Props) {
         onChange={(e) => setDescription(e.target.value)}
         rows={3}
       />
+
+      <div>
+        <label className="block mb-1">Родители</label>
+        <select
+          multiple
+          className="w-full rounded border p-2"
+          onChange={(e) =>
+            setParentsIds(
+              Array.from(e.target.selectedOptions).map((o) => o.value),
+            )
+          }
+        >
+          {existingPeople.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.firstName} {p.lastName}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div>
+        <label className="block mb-1">Дети</label>
+        <select
+          multiple
+          className="w-full rounded border p-2"
+          onChange={(e) =>
+            setChildrenIds(
+              Array.from(e.target.selectedOptions).map((o) => o.value),
+            )
+          }
+        >
+          {existingPeople.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.firstName} {p.lastName}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div>
+        <label className="block mb-1">Супруги</label>
+        <select
+          multiple
+          className="w-full rounded border p-2"
+          onChange={(e) =>
+            setSpouseIds(
+              Array.from(e.target.selectedOptions).map((o) => o.value),
+            )
+          }
+        >
+          {existingPeople.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.firstName} {p.lastName}
+            </option>
+          ))}
+        </select>
+      </div>
 
       <button
         type="submit"

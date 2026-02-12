@@ -2,14 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import PersonForm from "@/components/PersonForm";
-import { addPerson } from "@/utils/storage";
+import { addPersonWithRelations } from "@/utils/storage";
 import { Person } from "@/types/person";
 
 export default function CreatePersonPage() {
   const router = useRouter();
 
   function handleCreate(person: Person) {
-    addPerson(person);
+    addPersonWithRelations(person);
     router.push("/people");
   }
 
