@@ -1,8 +1,22 @@
-export default function CreatePage() {
+"use client";
+
+import { useRouter } from "next/navigation";
+import PersonForm from "@/components/PersonForm";
+import { addPerson } from "@/utils/storage";
+import { Person } from "@/types/person";
+
+export default function CreatePersonPage() {
+  const router = useRouter();
+
+  function handleCreate(person: Person) {
+    addPerson(person);
+    router.push("/people");
+  }
+
   return (
-    <div>
-      <h1>Create Page</h1>
-      <p>This is the Create page content.</p>
-    </div>
+    <section>
+      <h1 className="text-2xl font-bold mb-6">Добавить человека</h1>
+      <PersonForm onSubmit={handleCreate} />
+    </section>
   );
 }
