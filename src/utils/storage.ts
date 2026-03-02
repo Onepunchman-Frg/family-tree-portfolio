@@ -26,3 +26,27 @@ export function addPersonWithRelations(person: Person) {
   const updated = updateRelations(people, person);
   savePeople(updated);
 }
+
+export function updatePersonWithRelations(updatedPerson: Person) {
+  const people = getPeople();
+
+  // 1. Удаляем старые связи у других
+  const withoutOldRelations = people.map((p) => {
+    if (p.id === updatedPerson.id) return p;
+
+    return {
+      ...p,
+      parentsIds: p.parentsIds.filter((id) => id !== updatedPerson.id),
+      childrenIds: p.childrenIds.filter((id) => id !== updatedPerson.id),
+      spouseIds: p.spouseIds.filter((id) => id !== updatedPerson.id),
+    };
+  });
+
+  // 2. Пересчитываем связи заново
+  const recalculated = updateRelations(
+    withoutOldRelations.filter((p) => p.id !== updatedPerson.id),
+    updatedPerson,
+  );
+
+  savePeople(recalculated);
+}

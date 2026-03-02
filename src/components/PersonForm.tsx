@@ -2,13 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { Person, Gender } from "@/types/person";
-import { getPeople } from "@/utils/storage";
+import { addPersonWithRelations, getPeople } from "@/utils/storage";
+import { useRouter } from "next/navigation";
 
 interface Props {
-  onSubmit: (person: Person) => void;
+  initialData?: Person;
+  onSubmit?: (person: Person) => void;
 }
 
-export default function PersonForm({ onSubmit }: Props) {
+export default function PersonForm({ onSubmit, initialData }: Props) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [gender, setGender] = useState<Gender>("male");
@@ -21,31 +23,52 @@ export default function PersonForm({ onSubmit }: Props) {
   useEffect(() => {
     setExistingPeople(getPeople());
   }, []);
+  useEffect(() => {
+    if (initialData) {
+      setFirstName(initialData.firstName);
+      setLastName(initialData.lastName);
+      setGender(initialData.gender);
+      setBirthDate(initialData.birthDate ?? "");
+      setBirthPlace(initialData.birthPlace ?? "");
+      setDescription(initialData.description ?? "");
+      setParentsIds(initialData.parentsIds ?? []);
+      setChildrenIds(initialData.childrenIds ?? []);
+      setSpouseIds(initialData.spouseIds ?? []);
+    }
+  }, [initialData]);
+  const router = useRouter();
   const [parentsIds, setParentsIds] = useState<string[]>([]);
   const [childrenIds, setChildrenIds] = useState<string[]>([]);
   const [spouseIds, setSpouseIds] = useState<string[]>([]);
 
-  function handleSubmit(e: React.FormEvent) {
+  // Using individual field states instead of a combined form state.
+
+  function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
 
     const now = new Date().toISOString();
 
     const newPerson: Person = {
-      id: crypto.randomUUID(),
+      id: initialData?.id ?? crypto.randomUUID(),
       firstName,
       lastName,
       gender,
       birthDate: birthDate || undefined,
       birthPlace,
       description,
-      parentsIds: [],
-      childrenIds: [],
-      spouseIds: [],
-      createdAt: now,
+      parentsIds,
+      childrenIds,
+      spouseIds,
+      createdAt: initialData?.createdAt ?? now,
       updatedAt: now,
     };
 
-    onSubmit(newPerson);
+    if (onSubmit) {
+      onSubmit(newPerson);
+    } else {
+      addPersonWithRelations(newPerson);
+      router.push("/people");
+    }
   }
 
   return (

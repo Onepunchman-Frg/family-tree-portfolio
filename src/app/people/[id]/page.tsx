@@ -1,16 +1,26 @@
-import { people } from "@/data/people";
-import { findPersonById, findPeopleByIds } from "@/utils/relations";
+"use client";
+
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import Link from "next/link";
+import { Person } from "@/types/person";
+import { getPeople } from "@/utils/storage";
+import { findPersonById, findPeopleByIds } from "@/utils/relations";
 
-interface Props {
-  params: Promise<{
-    id: string;
-  }>;
-}
+export default function PersonPage() {
+  const params = useParams();
+  const id = params.id as string;
 
-export default async function PersonPage({ params }: Props) {
-  const { id } = await params;
-  const person = findPersonById(people, id);
+  const [person, setPerson] = useState<Person | null>(null);
+  const [people, setPeople] = useState<Person[]>([]);
+
+  useEffect(() => {
+    const storedPeople = getPeople();
+    setPeople(storedPeople);
+
+    const found = findPersonById(storedPeople, id);
+    if (found) setPerson(found);
+  }, [id]);
 
   if (!person) {
     return <p>Человек не найден</p>;
@@ -50,13 +60,7 @@ export default async function PersonPage({ params }: Props) {
   );
 }
 
-function InfoBlock({
-  title,
-  people,
-}: {
-  title: string;
-  people: { id: string; firstName: string; lastName: string }[];
-}) {
+function InfoBlock({ title, people }: { title: string; people: Person[] }) {
   return (
     <div>
       <h2 className="font-semibold mb-1">{title}</h2>
